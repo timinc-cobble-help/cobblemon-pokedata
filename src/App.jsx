@@ -15,7 +15,7 @@ const notFound = "notFound";
 
 function App() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [pokemonName, setPokemonName, pokemonNameRegistration] = useFormEntry(
+  const [pokemonName, _setPokemonName, pokemonNameRegistration] = useFormEntry(
     searchParams.get("name") || ""
   );
   const [tag, setTag, tagRegistration] = useFormEntry(
@@ -27,6 +27,15 @@ function App() {
   const [model, setModel] = useState(null);
   const [texture, setTexture] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  const cleanPokemonName = useMemo(
+    () =>
+      pokemonName
+        .replace(/\s/g, "")
+        .replace(/[^a-zA-Z0-9_]/g, "")
+        .toLowerCase(),
+    []
+  );
 
   useEffect(() => {
     getTags().then((e) => {
@@ -40,48 +49,48 @@ function App() {
   const updateSpawn = useCallback(async () => {
     try {
       setSpawn(null);
-      const spawnData = await huntForSpawn(pokemonName, tag);
+      const spawnData = await huntForSpawn(cleanPokemonName, tag);
       setSpawn(spawnData.path);
     } catch (error) {
       setSpawn(notFound);
     }
-  }, [pokemonName, tag]);
+  }, [cleanPokemonName, tag]);
 
   const updateSpecies = useCallback(async () => {
     try {
       setSpecies(null);
-      const speciesData = await huntForPokemon(pokemonName, tag);
+      const speciesData = await huntForPokemon(cleanPokemonName, tag);
       setSpecies(speciesData.path);
     } catch (error) {
       setSpecies(notFound);
     }
-  }, [pokemonName, tag]);
+  }, [cleanPokemonName, tag]);
 
   const updateModel = useCallback(async () => {
     try {
       setModel(null);
-      const modelData = await huntForModel(pokemonName, tag);
+      const modelData = await huntForModel(cleanPokemonName, tag);
       setModel(modelData.path);
     } catch (error) {
       setModel(notFound);
     }
-  }, [pokemonName, tag]);
+  }, [cleanPokemonName, tag]);
 
   const updateTexture = useCallback(async () => {
     try {
       setTexture(null);
-      const textureData = await huntForTexture(pokemonName, tag);
+      const textureData = await huntForTexture(cleanPokemonName, tag);
       setTexture(textureData.path);
     } catch (error) {
       setTexture(notFound);
     }
-  }, [pokemonName, tag]);
+  }, [cleanPokemonName, tag]);
 
   const handleSearch = useCallback(async () => {
     setLoading(true);
     setSearchParams({
       tag: tag,
-      name: pokemonName,
+      name: cleanPokemonName,
     });
     await Promise.all([
       updateSpawn(),
