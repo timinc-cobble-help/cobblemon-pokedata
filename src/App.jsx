@@ -34,7 +34,7 @@ function App() {
         .replace(/\s/g, "")
         .replace(/[^a-zA-Z0-9_]/g, "")
         .toLowerCase(),
-    []
+    [pokemonName]
   );
 
   useEffect(() => {
