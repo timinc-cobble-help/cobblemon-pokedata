@@ -11,6 +11,7 @@ import {
 import Input from "./components/Input";
 import { useSearchParams } from "react-router-dom";
 
+const staticBranches = ["1.3.0", "1.3.1", "1.4.0", "1.4.0a", "1.4.1"].reverse();
 const notFound = "notFound";
 
 function App() {
@@ -39,7 +40,7 @@ function App() {
 
   useEffect(() => {
     getTags().then((e) => {
-      setTags(e);
+      setTags([...e.map(({name}) => name), ...staticBranches]);
       if (tag === "") {
         setTag(e[0].name);
       }
@@ -117,7 +118,7 @@ function App() {
           {...pokemonNameRegistration}
         >
           <select {...tagRegistration} disabled={loading}>
-            {tags?.map(({ name }) => (
+            {tags?.map((name) => (
               <option key={name}>{name}</option>
             ))}
           </select>
