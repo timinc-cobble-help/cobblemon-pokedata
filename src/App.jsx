@@ -32,7 +32,7 @@ function App() {
     getTags().then((e) => {
       setTags(e);
       if (tag === "") {
-        tag.setValue(e[0].name);
+        setTag(e[0].name);
       }
     });
   }, [tag]);
