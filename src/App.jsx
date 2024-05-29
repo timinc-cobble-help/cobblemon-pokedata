@@ -39,6 +39,7 @@ function App() {
 
   const updateSpawn = useCallback(async () => {
     try {
+      setSpawn(null);
       const spawnData = await huntForSpawn(pokemonName, tag);
       setSpawn(spawnData.path);
     } catch (error) {
@@ -48,6 +49,7 @@ function App() {
 
   const updateSpecies = useCallback(async () => {
     try {
+      setSpecies(null);
       const speciesData = await huntForPokemon(pokemonName, tag);
       setSpecies(speciesData.path);
     } catch (error) {
@@ -57,6 +59,7 @@ function App() {
 
   const updateModel = useCallback(async () => {
     try {
+      setModel(null);
       const modelData = await huntForModel(pokemonName, tag);
       setModel(modelData.path);
     } catch (error) {
@@ -66,6 +69,7 @@ function App() {
 
   const updateTexture = useCallback(async () => {
     try {
+      setTexture(null);
       const textureData = await huntForTexture(pokemonName, tag);
       setTexture(textureData.path);
     } catch (error) {
