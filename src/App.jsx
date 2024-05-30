@@ -10,6 +10,7 @@ import {
 } from "./util";
 import Input from "./components/Input";
 import { useSearchParams } from "react-router-dom";
+import coinJar from "./assets/Ko-fi_COIN.gif";
 
 const staticBranches = ["1.3.0", "1.3.1", "1.4.0", "1.4.0a", "1.4.1"].reverse();
 const notFound = "notFound";
@@ -28,6 +29,7 @@ function App() {
   const [model, setModel] = useState(null);
   const [texture, setTexture] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [cookieEaten, setCookieEaten] = useState(false);
 
   const cleanPokemonName = useMemo(
     () =>
@@ -40,7 +42,7 @@ function App() {
 
   useEffect(() => {
     getTags().then((e) => {
-      setTags([...e.map(({name}) => name), ...staticBranches]);
+      setTags([...e.map(({ name }) => name), ...staticBranches]);
       if (tag === "") {
         setTag(e[0].name);
       }
@@ -109,7 +111,7 @@ function App() {
       </header>
       <main>
         <Input
-          label="1) Enter the name of the Pokemon species you would like information on and the version you're playing"
+          label="Enter the name of the Pokemon species you would like information on and the version you're playing"
           btn={{
             label: "Search",
             onClick: handleSearch,
@@ -180,7 +182,20 @@ function App() {
             </div>
           ))}
       </main>
-      <footer></footer>
+      <footer>
+        <div>Made with ❤️ by Tim</div>
+        <div>
+          <a
+            href="https://ko-fi.com/programmingwithtim"
+            target="_blank"
+            rel="noreferrer"
+            data-tooltip="Drop a coin in my coin jar ^^"
+          >
+            <img src={coinJar} className="logo" />
+          </a>
+          <span onClick={() => setCookieEaten(true)} data-tooltip="JK we don't use cookies">🍪</span>
+        </div>
+      </footer>
     </div>
   );
 }

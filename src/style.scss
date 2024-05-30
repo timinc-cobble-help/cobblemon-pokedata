@@ -10,4 +10,28 @@
 
   // Enable .classes
   $enable-classes: true
-)
+);
+
+#pico-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+#pico-root main {
+  flex-grow: 1;
+}
+
+#pico-root footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+#pico-root footer .logo {
+  height: 1em;
+}
+
+[data-tooltip]:not(a, button, input) {
+  text-decoration: none;
+  border-bottom-style: none;
+}
