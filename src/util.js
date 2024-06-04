@@ -25,7 +25,13 @@ const huntForSpawn = async (pokemonName, branchName) => {
   throw new Error(`No spawn found for ${branchName}:${pokemonName}`);
 };
 
+const specialNameNumbers = {
+  mimikyu: "0778"
+};
 const getNumberFromName = async (pokemonName) => {
+  if (pokemonName in specialNameNumbers) {
+    return specialNameNumbers[pokemonName];
+  }
   const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonName);
   const data = await response.json();
   return `${data.id}`.padStart(4, "0");
