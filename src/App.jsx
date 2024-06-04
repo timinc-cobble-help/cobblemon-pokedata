@@ -84,7 +84,7 @@ function App() {
     try {
       setTexture(null);
       const textureData = await huntForTexture(cleanPokemonName, tag);
-      setTexture(textureData.path);
+      setTexture(textureData);
     } catch (error) {
       setTexture(notFound);
     }
@@ -100,10 +100,10 @@ function App() {
       updateSpawn(),
       updateSpecies(),
       updateModel(),
-      // updateTexture(),
+      updateTexture(),
     ]);
     setLoading(false);
-  }, [setSearchParams, tag, cleanPokemonName, updateSpawn, updateSpecies, updateModel]);
+  }, [setSearchParams, tag, cleanPokemonName, updateSpawn, updateSpecies, updateModel, updateTexture]);
 
   return (
     <div id="pico-root">
@@ -166,7 +166,7 @@ function App() {
           ) : (
             <div>
               <a
-                href={`https://gitlab.com/cable-mc/cobblemon/-/tree/${tag}/${texture}`}
+                href={texture}
                 target="_blank"
                 rel="noreferrer"
               >
