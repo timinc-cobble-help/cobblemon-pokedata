@@ -33,15 +33,10 @@ const getNumberFromName = async (pokemonName) => {
 
 const huntForModel = async (pokemonName, branchName) => {
   const number = await getNumberFromName(pokemonName);
-  const filePath1 = `common/src/main/resources/assets/cobblemon/bedrock/pokemon/models/${number}_${cleanName(pokemonName)}/${pokemonName.replace(/-/g, "_")}.geo.json`;
-  const response1 = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath1.replaceAll("/", "%2F")}?ref=${branchName}`);
-  if (response1.ok) {
-    return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath1}?ref_type=tags`;
-  }
-  const filePath2 = `common/src/main/resources/assets/cobblemon/bedrock/pokemon/models/${number}_${cleanName(pokemonName)}/${pokemonName.replace(/-/g, "")}.geo.json`;
-  const response2 = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath2.replaceAll("/", "%2F")}?ref=${branchName}`);
-  if (response2.ok) {
-    return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath2}?ref_type=tags`;
+  const filePath = `common/src/main/resources/assets/cobblemon/bedrock/pokemon/models/${number}_${cleanName(pokemonName)}`;
+  const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/tree/?path=${filePath}&ref=${branchName}`);
+  if (response.ok) {
+    return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath}?ref_type=tags`;
   }
   throw new Error(`No model found for ${branchName}:${pokemonName}`);
 };
