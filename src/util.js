@@ -37,21 +37,13 @@ const getNumberFromName = async (pokemonName) => {
 };
 
 const huntForModel = async (pokemonName, branchName) => {
-  const currentKnownModels = [...cachedModelRefs];
-  while (!currentKnownModels.some(({ name }) => name.endsWith(`${pokemonName}`))) {
-    const data = await fetchDirectory(
-      "common/src/main/resources/assets/cobblemon/bedrock/pokemon/models",
-      branchName,
-      { page: currentKnownModels.length / 20 + 1, recursive: true }
-    );
-    if (!data?.length)
-      throw new Error("Pokemon not found: " + pokemonName);
-    currentKnownModels.push(...data);
+  const number = await getNumberFromName(pokemonName);
+  const filePath = `common/src/main/resources/assets/cobblemon/bedrock/pokemon/models/${number}_${cleanName(pokemonName)}/${pokemonName.replace(/-/g, "_")}.geo.json`;
+  const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath.replaceAll("/", "%2F")}?ref=${branchName}`);
+  if (response.ok) {
+    return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath}?ref_type=tags`;
   }
-  setCachedModelRefs(currentKnownModels);
-  return currentKnownModels.find(
-    ({ name }) => name.endsWith(`${pokemonName}`)
-  );
+  throw new Error(`No model found for ${branchName}:${pokemonName}`);
 };
 
 const huntForTexture = async (pokemonName, branchName) => {

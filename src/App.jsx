@@ -74,7 +74,7 @@ function App() {
     try {
       setModel(null);
       const modelData = await huntForModel(cleanPokemonName, tag);
-      setModel(modelData.path);
+      setModel(modelData);
     } catch (error) {
       setModel(notFound);
     }
@@ -99,11 +99,11 @@ function App() {
     await Promise.all([
       updateSpawn(),
       updateSpecies(),
-      // updateModel(),
+      updateModel(),
       // updateTexture(),
     ]);
     setLoading(false);
-  }, [setSearchParams, tag, cleanPokemonName, updateSpawn, updateSpecies]);
+  }, [setSearchParams, tag, cleanPokemonName, updateSpawn, updateSpecies, updateModel]);
 
   return (
     <div id="pico-root">
@@ -152,7 +152,7 @@ function App() {
           ) : (
             <div>
               <a
-                href={`https://gitlab.com/cable-mc/cobblemon/-/tree/${tag}/${model}`}
+                href={model}
                 target="_blank"
                 rel="noreferrer"
               >
