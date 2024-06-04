@@ -34,8 +34,9 @@ function App() {
   const cleanPokemonName = useMemo(
     () =>
       pokemonName
-        .replace(/\s/g, "")
-        .replace(/[^a-zA-Z0-9_]/g, "")
+        .replace(/\s+/g, " ")
+        .replace(/\s/g, "-")
+        .replace(/[^a-zA-Z0-9_-]/g, "")
         .toLowerCase(),
     [pokemonName]
   );
@@ -47,13 +48,13 @@ function App() {
         setTag(e[0].name);
       }
     });
-  }, [tag]);
+  }, [setTag, tag]);
 
   const updateSpawn = useCallback(async () => {
     try {
       setSpawn(null);
       const spawnData = await huntForSpawn(cleanPokemonName, tag);
-      setSpawn(spawnData.path);
+      setSpawn(spawnData);
     } catch (error) {
       setSpawn(notFound);
     }
@@ -63,7 +64,7 @@ function App() {
     try {
       setSpecies(null);
       const speciesData = await huntForPokemon(cleanPokemonName, tag);
-      setSpecies(speciesData.path);
+      setSpecies(speciesData);
     } catch (error) {
       setSpecies(notFound);
     }
@@ -98,11 +99,11 @@ function App() {
     await Promise.all([
       updateSpawn(),
       updateSpecies(),
-      updateModel(),
-      updateTexture(),
+      // updateModel(),
+      // updateTexture(),
     ]);
     setLoading(false);
-  }, [updateSpawn, updateSpecies, updateModel, updateTexture]);
+  }, [setSearchParams, tag, cleanPokemonName, updateSpawn, updateSpecies]);
 
   return (
     <div id="pico-root">
@@ -130,11 +131,7 @@ function App() {
             <div>Could not find species data</div>
           ) : (
             <div>
-              <a
-                href={`https://gitlab.com/cable-mc/cobblemon/-/tree/${tag}/${species}`}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={species} target="_blank" rel="noreferrer">
                 Species Data
               </a>
             </div>
@@ -144,11 +141,7 @@ function App() {
             <div>Could not find spawn data</div>
           ) : (
             <div>
-              <a
-                href={`https://gitlab.com/cable-mc/cobblemon/-/tree/${tag}/${spawn}`}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={spawn} target="_blank" rel="noreferrer">
                 Spawn Data
               </a>
             </div>
@@ -193,7 +186,12 @@ function App() {
           >
             <img src={coinJar} className="logo" />
           </a>
-          <span onClick={() => setCookieEaten(true)} data-tooltip="JK we don't use cookies">🍪</span>
+          <span
+            onClick={() => setCookieEaten(true)}
+            data-tooltip="JK we don't use cookies"
+          >
+            🍪
+          </span>
         </div>
       </footer>
     </div>

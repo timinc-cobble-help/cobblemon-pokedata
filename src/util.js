@@ -1,53 +1,40 @@
 import crypto from "crypto";
 
-let cachedPokemonRefs = [];
-const setCachedPokemonRefs = (newValue) => cachedPokemonRefs = newValue;
-
-let cachedSpawnRefs = [];
-const setCachedSpawnRefs = (newValue) => cachedSpawnRefs = newValue;
-
 let cachedModelRefs = [];
 const setCachedModelRefs = (newValue) => cachedModelRefs = newValue;
 
+const cleanName = name => name.replace(/-/g, "");
+
 const huntForPokemon = async (pokemonName, branchName) => {
-  const currentKnownPokemon = [...cachedPokemonRefs];
-  while (
-    !currentKnownPokemon.some(({ name }) => name === `${pokemonName}.json`)
-  ) {
-    const data = await fetchDirectory(
-      "common/src/main/resources/data/cobblemon/species",
-      branchName,
-      { page: currentKnownPokemon.length / 20 + 1, recursive: true }
-    );
-    if (!data?.length)
-      throw new Error("Pokemon not found: " + pokemonName);
-    currentKnownPokemon.push(...data);
-  }
-  setCachedPokemonRefs(currentKnownPokemon);
-  return currentKnownPokemon.find(
-    ({ name }) => name === `${pokemonName}.json`
+  const speciesRoot = "common/src/main/resources/data/cobblemon/species";
+  const data = await fetchDirectory(
+    speciesRoot,
+    branchName
   );
-}
+  for (let { name: folder } of data) {
+    const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/common%2Fsrc%2Fmain%2Fresources%2Fdata%2Fcobblemon%2Fspecies%2F${folder}%2F${cleanName(pokemonName)}.json?ref=${branchName}`);
+    if (response.ok) {
+      return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/common/src/main/resources/data/cobblemon/species/${folder}/${cleanName(pokemonName)}.json`;
+    }
+  }
+  throw new Error(`No species found for ${branchName}:${pokemonName}`);
+};
 
 const huntForSpawn = async (pokemonName, branchName) => {
-  const currentKnownSpawns = [...cachedSpawnRefs];
-  while (
-    !currentKnownSpawns.some(({ name }) => name.endsWith(`${pokemonName}.json`))
-  ) {
-    const data = await fetchDirectory(
-      "common/src/main/resources/data/cobblemon/spawn_pool_world",
-      branchName,
-      { page: currentKnownSpawns.length / 20 + 1, recursive: true }
-    );
-    if (!data?.length)
-      throw new Error("Pokemon not found: " + pokemonName);
-    currentKnownSpawns.push(...data);
+  const number = await getNumberFromName(pokemonName);
+  const filePath = `common/src/main/resources/data/cobblemon/spawn_pool_world/${number}_${cleanName(pokemonName)}.json?ref=${branchName}`;
+  const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath.replaceAll("/", "%2F")}`);
+  if (response.ok) {
+    return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath}?ref_type=tags`;
   }
-  setCachedSpawnRefs(currentKnownSpawns);
-  return currentKnownSpawns.find(
-    ({ name }) => name.endsWith(`${pokemonName}.json`)
-  );
-}
+  throw new Error(`No spawn found for ${branchName}:${pokemonName}`);
+};
+
+const getNumberFromName = async (pokemonName) => {
+  const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonName);
+  const data = await response.json();
+  return `${data.id}`.padStart(4, "0");
+};
 
 const huntForModel = async (pokemonName, branchName) => {
   const currentKnownModels = [...cachedModelRefs];
@@ -56,16 +43,16 @@ const huntForModel = async (pokemonName, branchName) => {
       "common/src/main/resources/assets/cobblemon/bedrock/pokemon/models",
       branchName,
       { page: currentKnownModels.length / 20 + 1, recursive: true }
-    )
+    );
     if (!data?.length)
-      throw new Error("Pokemon not found: " + pokemonName)
+      throw new Error("Pokemon not found: " + pokemonName);
     currentKnownModels.push(...data);
   }
   setCachedModelRefs(currentKnownModels);
   return currentKnownModels.find(
     ({ name }) => name.endsWith(`${pokemonName}`)
-  )
-}
+  );
+};
 
 const huntForTexture = async (pokemonName, branchName) => {
   const currentKnownModels = [...cachedModelRefs];
@@ -73,17 +60,17 @@ const huntForTexture = async (pokemonName, branchName) => {
     const data = await fetchDirectory(
       "common/src/main/resources/assets/cobblemon/textures/pokemon",
       branchName,
-      { page: currentKnownModels.length / 20 + 1, recursive: true }
-    )
+      { page: currentKnownModels.length / 20 + 1 }
+    );
     if (!data?.length)
-      throw new Error("Pokemon not found: " + pokemonName)
+      throw new Error("Pokemon not found: " + pokemonName);
     currentKnownModels.push(...data);
   }
   setCachedModelRefs(currentKnownModels);
   return currentKnownModels.find(
     ({ name }) => name.endsWith(`${pokemonName}`)
-  )
-}
+  );
+};
 
 async function fetchDirectory(
   dirname,
@@ -139,9 +126,9 @@ function isWeekend(unixTimestamp) {
 }
 
 const getTags = async () => {
-    const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/tags?id=cable-mc%2Fcobblemon`);
-    const data = await response.json();
-    return data;
-}
+  const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/tags?id=cable-mc%2Fcobblemon`);
+  const data = await response.json();
+  return data;
+};
 
-export { huntForPokemon, huntForSpawn, huntForModel, huntForTexture, isShiny, getTags }
+export { huntForPokemon, huntForSpawn, huntForModel, huntForTexture, isShiny, getTags };
