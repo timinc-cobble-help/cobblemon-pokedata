@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react";
 import "./style.scss";
 import useFormEntry from "./hooks/useFormEntry";
 import {
@@ -11,9 +11,10 @@ import {
 import Input from "./components/Input";
 import { useSearchParams } from "react-router-dom";
 import coinJar from "./assets/Ko-fi_COIN.gif";
+import SpeciesData from "./components/views/SpeciesData";
+import { notFound } from "./constants";
 
 const staticBranches = ["1.3.0", "1.3.1", "1.4.0", "1.4.0a", "1.4.1"].reverse();
-const notFound = "notFound";
 
 function App() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -103,7 +104,15 @@ function App() {
       updateTexture(),
     ]);
     setLoading(false);
-  }, [setSearchParams, tag, cleanPokemonName, updateSpawn, updateSpecies, updateModel, updateTexture]);
+  }, [
+    setSearchParams,
+    tag,
+    cleanPokemonName,
+    updateSpawn,
+    updateSpecies,
+    updateModel,
+    updateTexture,
+  ]);
 
   return (
     <div id="pico-root">
@@ -126,16 +135,7 @@ function App() {
             ))}
           </select>
         </Input>
-        {species &&
-          (species === notFound ? (
-            <div>Could not find species data</div>
-          ) : (
-            <div>
-              <a href={species} target="_blank" rel="noreferrer">
-                Species Data
-              </a>
-            </div>
-          ))}
+        <SpeciesData {...species} />
         {spawn &&
           (spawn === notFound ? (
             <div>Could not find spawn data</div>
@@ -151,11 +151,7 @@ function App() {
             <div>Could not find model data</div>
           ) : (
             <div>
-              <a
-                href={model}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={model} target="_blank" rel="noreferrer">
                 Model Data
               </a>
             </div>
@@ -165,11 +161,7 @@ function App() {
             <div>Could not find texture data</div>
           ) : (
             <div>
-              <a
-                href={texture}
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href={texture} target="_blank" rel="noreferrer">
                 Texture Data
               </a>
             </div>

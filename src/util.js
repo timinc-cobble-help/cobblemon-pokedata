@@ -1,15 +1,22 @@
-const cleanName = name => name.replace(/-/g, "");
+const cleanName = (name) => name.replace(/-/g, "");
 
 const huntForPokemon = async (pokemonName, branchName) => {
   const speciesRoot = "common/src/main/resources/data/cobblemon/species";
-  const data = await fetchDirectory(
-    speciesRoot,
-    branchName
-  );
+  const data = await fetchDirectory(speciesRoot, branchName);
   for (let { name: folder } of data) {
-    const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/common%2Fsrc%2Fmain%2Fresources%2Fdata%2Fcobblemon%2Fspecies%2F${folder}%2F${cleanName(pokemonName)}.json?ref=${branchName}`);
+    const response = await fetch(
+      `https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/common%2Fsrc%2Fmain%2Fresources%2Fdata%2Fcobblemon%2Fspecies%2F${folder}%2F${cleanName(
+        pokemonName
+      )}.json?ref=${branchName}`
+    );
     if (response.ok) {
-      return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/common/src/main/resources/data/cobblemon/species/${folder}/${cleanName(pokemonName)}.json`;
+      const data = await response.json();
+      return {
+        url: `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/common/src/main/resources/data/cobblemon/species/${folder}/${cleanName(
+          pokemonName
+        )}.json`,
+        content: JSON.parse(atob(data.content)),
+      };
     }
   }
   throw new Error(`No species found for ${branchName}:${pokemonName}`);
@@ -17,8 +24,15 @@ const huntForPokemon = async (pokemonName, branchName) => {
 
 const huntForSpawn = async (pokemonName, branchName) => {
   const number = await getNumberFromName(pokemonName);
-  const filePath = `common/src/main/resources/data/cobblemon/spawn_pool_world/${number}_${cleanName(pokemonName)}.json?ref=${branchName}`;
-  const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath.replaceAll("/", "%2F")}`);
+  const filePath = `common/src/main/resources/data/cobblemon/spawn_pool_world/${number}_${cleanName(
+    pokemonName
+  )}.json?ref=${branchName}`;
+  const response = await fetch(
+    `https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath.replaceAll(
+      "/",
+      "%2F"
+    )}`
+  );
   if (response.ok) {
     return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath}?ref_type=tags`;
   }
@@ -26,21 +40,27 @@ const huntForSpawn = async (pokemonName, branchName) => {
 };
 
 const specialNameNumbers = {
-  mimikyu: "0778"
+  mimikyu: "0778",
 };
 const getNumberFromName = async (pokemonName) => {
   if (pokemonName in specialNameNumbers) {
     return specialNameNumbers[pokemonName];
   }
-  const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + pokemonName);
+  const response = await fetch(
+    "https://pokeapi.co/api/v2/pokemon/" + pokemonName
+  );
   const data = await response.json();
   return `${data.id}`.padStart(4, "0");
 };
 
 const huntForModel = async (pokemonName, branchName) => {
   const number = await getNumberFromName(pokemonName);
-  const filePath = `common/src/main/resources/assets/cobblemon/bedrock/pokemon/models/${number}_${cleanName(pokemonName)}`;
-  const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/tree/?path=${filePath}&ref=${branchName}`);
+  const filePath = `common/src/main/resources/assets/cobblemon/bedrock/pokemon/models/${number}_${cleanName(
+    pokemonName
+  )}`;
+  const response = await fetch(
+    `https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/tree/?path=${filePath}&ref=${branchName}`
+  );
   if (response.ok) {
     return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath}?ref_type=tags`;
   }
@@ -49,13 +69,27 @@ const huntForModel = async (pokemonName, branchName) => {
 
 const huntForTexture = async (pokemonName, branchName) => {
   const number = await getNumberFromName(pokemonName);
-  const filePath1 = `common/src/main/resources/assets/cobblemon/textures/pokemon/${number}_${cleanName(pokemonName)}/${pokemonName.replace(/-/g, "_")}.png`;
-  const response1 = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath1.replaceAll("/", "%2F")}?ref=${branchName}`);
+  const filePath1 = `common/src/main/resources/assets/cobblemon/textures/pokemon/${number}_${cleanName(
+    pokemonName
+  )}/${pokemonName.replace(/-/g, "_")}.png`;
+  const response1 = await fetch(
+    `https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath1.replaceAll(
+      "/",
+      "%2F"
+    )}?ref=${branchName}`
+  );
   if (response1.ok) {
     return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath1}?ref_type=tags`;
   }
-  const filePath2 = `common/src/main/resources/assets/cobblemon/textures/pokemon/${number}_${cleanName(pokemonName)}/${pokemonName.replace(/-/g, "")}.png`;
-  const response2 = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath2.replaceAll("/", "%2F")}?ref=${branchName}`);
+  const filePath2 = `common/src/main/resources/assets/cobblemon/textures/pokemon/${number}_${cleanName(
+    pokemonName
+  )}/${pokemonName.replace(/-/g, "")}.png`;
+  const response2 = await fetch(
+    `https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/files/${filePath2.replaceAll(
+      "/",
+      "%2F"
+    )}?ref=${branchName}`
+  );
   if (response2.ok) {
     return `https://gitlab.com/cable-mc/cobblemon/-/blob/${branchName}/${filePath2}?ref_type=tags`;
   }
@@ -78,7 +112,9 @@ async function fetchDirectory(
 }
 
 const getTags = async () => {
-  const response = await fetch(`https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/tags?id=cable-mc%2Fcobblemon`);
+  const response = await fetch(
+    `https://gitlab.com/api/v4/projects/cable-mc%2Fcobblemon/repository/tags?id=cable-mc%2Fcobblemon`
+  );
   const data = await response.json();
   return data;
 };
