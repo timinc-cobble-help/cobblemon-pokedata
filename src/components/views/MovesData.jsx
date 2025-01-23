@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 
-export default function MovesData({ moves }) {
+export default function MovesData({ moves, form }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -18,14 +18,14 @@ export default function MovesData({ moves }) {
           obtainment = split[0];
         }
 
-        return { name: split[1], obtainment, level };
+        return { name: split[1], obtainment, level, og: move };
       }),
     [moves]
   );
 
   return (
     <>
-      <button onClick={() => setOpen(true)}>Moves</button>
+      <button onClick={() => setOpen(true)}>{form}'s Moves</button>
       <dialog open={open}>
         <article>
           <header>
@@ -43,7 +43,7 @@ export default function MovesData({ moves }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <table class="overflow-auto">
+          <table className="overflow-auto">
             <thead>
               <tr>
                 <th>Name</th>
@@ -54,7 +54,7 @@ export default function MovesData({ moves }) {
               {parsedMoves
                 .filter(({ name }) => name.includes(search.toLowerCase()))
                 .map((move) => (
-                  <MoveRow {...move} key={move} />
+                  <MoveRow {...move} key={move.og} />
                 ))}
             </tbody>
           </table>
