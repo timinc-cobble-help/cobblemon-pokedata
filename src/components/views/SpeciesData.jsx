@@ -10,7 +10,7 @@ export default function SpeciesData({ url, content }) {
     }
     retval[content.name] = content.moves;
     
-    content.forms.forEach(({name, moves}) => {
+    content.forms?.forEach(({name, moves}) => {
       retval[name] = moves;
     })
 
