@@ -6,13 +6,13 @@ export default function SpeciesData({ url, content }) {
   const allMoves = useMemo(() => {
     const retval = {};
     if (!content) {
-      return null
+      return {}
     }
-    retval[content.name] = content.moves;
-    
-    content.forms?.forEach(({name, moves}) => {
-      retval[name] = moves;
-    })
+    retval[content.name] = content.moves || [];
+
+    content.forms?.forEach(({ name, moves }) => {
+      retval[name] = moves || content.moves;
+    });
 
     return retval;
   }, [content]);
