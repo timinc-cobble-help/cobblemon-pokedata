@@ -41,7 +41,8 @@ const huntForSpawn = async (pokemonName, branchName) => {
 
 const specialNameNumbers = {
   mimikyu: "0778",
-  basculin: "0550"
+  basculin: "0550",
+  maushold: "0925"
 };
 const getNumberFromName = async (pokemonName) => {
   if (pokemonName in specialNameNumbers) {
