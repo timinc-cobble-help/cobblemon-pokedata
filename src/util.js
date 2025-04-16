@@ -42,7 +42,9 @@ const huntForSpawn = async (pokemonName, branchName) => {
 const specialNameNumbers = {
   mimikyu: "0778",
   basculin: "0550",
-  maushold: "0925"
+  maushold: "0925",
+  pumpkaboo: "0710",
+  gourgeist: "0711",
 };
 const getNumberFromName = async (pokemonName) => {
   if (pokemonName in specialNameNumbers) {
