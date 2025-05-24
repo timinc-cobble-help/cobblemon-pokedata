@@ -45,7 +45,8 @@ const specialNameNumbers = {
   maushold: "0925",
   pumpkaboo: "0710",
   gourgeist: "0711",
-  basculegion: "0902"
+  basculegion: "0902",
+  wishiwashi: "0746"
 };
 const getNumberFromName = async (pokemonName) => {
   if (pokemonName in specialNameNumbers) {
